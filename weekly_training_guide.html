@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Training Guide — Repeat Weekly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#17161B;
+    --surface:#1F1E24;
+    --surface-2:#262530;
+    --text:#EDEAE3;
+    --text-dim:#9A968E;
+    --accent:#C9472B;
+    --accent-soft:rgba(201,71,43,.16);
+    --steel:#6F8CA1;
+    --steel-soft:rgba(111,140,161,.16);
+    --line:#34333B;
+    --radius:14px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(201,71,43,.08), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(111,140,161,.06), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+
+  a{ color:inherit; }
+  button{ font-family:inherit; }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 20px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:44px 0 28px;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:2.5px;
+    color:var(--steel);
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .hero-title{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:clamp(40px, 11vw, 62px);
+    line-height:0.92;
+    letter-spacing:1px;
+    margin:0 0 20px;
+    color:var(--text);
+  }
+  .hero-title span{ color:var(--accent); }
+  .goal-readout{
+    display:inline-flex;
+    align-items:baseline;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:100px;
+    padding:10px 22px;
+  }
+  .goal-num{ font-size:20px; font-weight:700; }
+  .goal-num.target{ color:var(--accent); }
+  .goal-arrow{ color:var(--text-dim); font-size:16px; }
+  .goal-unit{ font-size:11px; color:var(--text-dim); letter-spacing:1px; align-self:center; }
+  .hero-sub{
+    margin:16px 0 0;
+    font-size:13.5px;
+    color:var(--text-dim);
+    line-height:1.5;
+  }
+
+  /* ---------- Daily dashboard ---------- */
+  .dashboard{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:28px;
+  }
+  .dashboard-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:2px;
+    color:var(--steel);
+    text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(105px, 1fr));
+    gap:12px;
+  }
+  .stat{
+    text-align:left;
+  }
+  .stat-value{
+    font-family:'JetBrains Mono', monospace;
+    font-size:16px;
+    font-weight:700;
+    color:var(--text);
+    white-space:nowrap;
+  }
+  .stat-label{
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:2px;
+  }
+
+  /* ---------- Plate rack (day selector) ---------- */
+  .plate-rack{
+    display:flex;
+    justify-content:space-between;
+    gap:4px;
+    margin-bottom:26px;
+    padding:4px 2px;
+    overflow-x:auto;
+  }
+  .day-btn{
+    background:none;
+    border:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    padding:6px 4px;
+    cursor:pointer;
+    flex:1;
+    min-width:40px;
+  }
+  .day-btn:focus-visible .plate{
+    outline:2px solid var(--steel);
+    outline-offset:3px;
+  }
+  .plate{
+    position:relative;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    border:2px solid #3B3A42;
+    background:radial-gradient(circle at 33% 28%, #4C4B54, #201F26 72%);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .plate::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    margin:auto;
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    background:var(--bg);
+    box-shadow:inset 0 2px 3px rgba(0,0,0,.75);
+  }
+  .day-btn.rest .plate{ opacity:.45; }
+  .day-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:1px;
+    color:var(--text-dim);
+  }
+  .today-dot{
+    position:absolute;
+    top:-2px; right:-2px;
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 2px var(--bg);
+  }
+  .day-btn.active .plate{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft), 0 4px 12px rgba(0,0,0,.45);
+    transform:translateY(-3px);
+  }
+  .day-btn.active .day-label{ color:var(--accent); font-weight:700; }
+
+  /* ---------- Day panel ---------- */
+  .day-panel{ min-height:200px; }
+  .day-panel-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom:1px solid var(--line);
+    padding-bottom:14px;
+    margin-bottom:6px;
+  }
+  .day-name{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:26px;
+    letter-spacing:0.5px;
+    margin:0;
+  }
+  .day-focus{
+    font-size:12.5px;
+    color:var(--text-dim);
+    text-align:right;
+  }
+
+  .exercise{
+    border-bottom:1px solid var(--line);
+  }
+  .exercise-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:16px 0;
+  }
+  .exercise-main{ min-width:0; }
+  .exercise-name{
+    font-size:15px;
+    font-weight:600;
+    margin-bottom:3px;
+  }
+  .exercise-presc{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--steel);
+  }
+  .exercise-presc.muted{
+    color:var(--text-dim);
+    font-style:italic;
+    font-size:12px;
+  }
+
+  .watch-link{
+    flex-shrink:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.5px;
+    font-weight:700;
+    border:1.5px solid var(--steel);
+    color:var(--steel);
+    background:transparent;
+    border-radius:100px;
+    padding:8px 14px;
+    cursor:pointer;
+    text-decoration:none;
+    white-space:nowrap;
+    transition:background .15s ease, color .15s ease;
+  }
+  .watch-link:hover{
+    background:var(--steel);
+    color:#17161B;
+  }
+  .watch-link:focus-visible{
+    outline:2px solid var(--text);
+    outline-offset:2px;
+  }
+
+  .video-card{
+    flex-shrink:0;
+    position:relative;
+    width:92px;
+    height:52px;
+    border-radius:8px;
+    overflow:hidden;
+    display:block;
+    background:var(--surface-2);
+    border:1.5px solid var(--line);
+  }
+  .video-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .video-card .play-badge{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(23,22,27,.28);
+    color:#fff;
+    font-size:14px;
+    transition:background .15s ease;
+  }
+  .video-card:hover .play-badge{
+    background:rgba(201,71,43,.55);
+  }
+  .video-card:focus-visible{
+    outline:2px solid var(--text);
+    outline-offset:2px;
+  }
+
+  /* ---------- Rest panel ---------- */
+  .rest-panel{
+    text-align:center;
+    padding:50px 20px 40px;
+    color:var(--text-dim);
+  }
+  .rest-icon{
+    width:10px; height:10px;
+    border-radius:50%;
+    background:var(--steel);
+    margin:0 auto 18px;
+  }
+  .rest-panel h2{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:24px;
+    color:var(--text);
+    margin:0 0 8px;
+    letter-spacing:0.5px;
+  }
+  .rest-panel p{
+    font-size:13.5px;
+    line-height:1.6;
+    max-width:340px;
+    margin:0 auto;
+  }
+
+  /* ---------- Footer ---------- */
+  .footnote{
+    margin-top:36px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    font-size:12px;
+    line-height:1.6;
+    color:var(--text-dim);
+  }
+  .footnote strong{ color:var(--text); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+
+  @media (max-width:400px){
+    .plate{ width:40px; height:40px; }
+    .day-panel-head{ flex-direction:column; align-items:flex-start; gap:6px; }
+    .day-focus{ text-align:left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">12-Week Plan · One Week, Repeated</div>
+    <h1 class="hero-title">TRAIN<br><span>THIS WEEK</span></h1>
+    <div class="goal-readout">
+      <span class="goal-num">245</span>
+      <span class="goal-arrow">→</span>
+      <span class="goal-num target">200–215</span>
+      <span class="goal-unit">LB</span>
+    </div>
+    <p class="hero-sub">This is one week of your plan — cycle it for all 12, adding a little weight to the bar as each lift starts feeling easier.</p>
+  </header>
+
+  <div class="dashboard">
+    <div class="dashboard-label">Every Day</div>
+    <div class="dashboard-grid">
+      <div class="stat"><div class="stat-value">30 min</div><div class="stat-label">Treadmill</div></div>
+      <div class="stat"><div class="stat-value">180–220g</div><div class="stat-label">Protein</div></div>
+      <div class="stat"><div class="stat-value">2200–2500</div><div class="stat-label">Calories</div></div>
+      <div class="stat"><div class="stat-value">8k–10k</div><div class="stat-label">Steps</div></div>
+      <div class="stat"><div class="stat-value">7–9 hr</div><div class="stat-label">Sleep</div></div>
+    </div>
+  </div>
+
+  <nav class="plate-rack" id="plate-rack" aria-label="Choose a day"></nav>
+
+  <main class="day-panel" id="day-panel"></main>
+
+  <p class="footnote">
+    <strong>Tap a thumbnail</strong> on the main lifts to watch that technique video on YouTube. On accessory moves, <strong>FORM ↗</strong> opens a search so you can pick the demo you like best.
+    New to squats, deadlifts, or overhead pressing? Start light and check in with a doctor or trainer before loading up.
+  </p>
+
+</div>
+
+<script>
+  const YT_SEARCH = q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+
+  const DAYS = [
+    { id:'mon', short:'MON', name:'Monday', focus:'Chest · Shoulders · Triceps', type:'lift', exercises:[
+      { name:'Barbell Bench Press', presc:'4×6–8', video:'Pp8rHcFVIYg' },
+      { name:'Incline Dumbbell Press', presc:'3×8–12', query:'incline dumbbell press form' },
+      { name:'Dumbbell Fly', presc:'3×12–15', query:'dumbbell fly form' },
+      { name:'Barbell Overhead Press', presc:'4×6–8', video:'GlyABLsPk-Q' },
+      { name:'Lateral Raise', presc:'4×15–20', query:'dumbbell lateral raise form' },
+      { name:'Triceps Pushdown', presc:'3×12', query:'triceps pushdown form' },
+    ]},
+    { id:'tue', short:'TUE', name:'Tuesday', focus:'Back · Biceps', type:'lift', exercises:[
+      { name:'Lat Pulldown', presc:'4×8–12', video:'Z_3xHwuO8Tk' },
+      { name:'Bent-Over Row', presc:'4×6–8', video:'ZtTwgJTBjOQ' },
+      { name:'Face Pull', presc:'3×15–20', query:'cable face pull form' },
+      { name:'EZ Bar Curl', presc:'3×10–12', query:'ez bar curl form' },
+      { name:'Hammer Curl', presc:'3×12–15', query:'dumbbell hammer curl form' },
+    ]},
+    { id:'wed', short:'WED', name:'Wednesday', focus:'Rest', type:'rest' },
+    { id:'thu', short:'THU', name:'Thursday', focus:'Legs · Core', type:'lift', exercises:[
+      { name:'Barbell Back Squat', presc:'4×6–8', video:'8PMjqgR8Wa8' },
+      { name:'Romanian Deadlift', presc:'3×8–10', video:'_oyxCn2iSjU' },
+      { name:'Bulgarian Split Squat', presc:'3×10–12 /leg', video:'yewlXtRs3K4' },
+      { name:'Leg Curl', presc:'3×12–15', query:'lying leg curl machine form' },
+      { name:'Core', presc:'3×15–20', query:'core workout form' },
+      { name:'Kegels', presc:'3×10 (5s hold)', query:'how to do kegel exercises correctly' },
+    ]},
+    { id:'fri', short:'FRI', name:'Friday', focus:'Chest · Shoulders · Triceps', type:'lift', exercises:[
+      { name:'Incline Barbell Bench Press', presc:'4×6–8', query:'incline barbell bench press form' },
+      { name:'Dips', presc:'3×8–12', video:'yN6Q1UI_xkE' },
+      { name:'Shoulder Press', presc:'3×8–12', query:'dumbbell shoulder press form' },
+      { name:'Lateral Raise', presc:'4×15–20', query:'dumbbell lateral raise form' },
+      { name:'Rear Delt Fly', presc:'3×15–20', query:'rear delt fly form' },
+      { name:'Biceps Curl', presc:'3×10–12', query:'dumbbell bicep curl form' },
+    ]},
+    { id:'sat', short:'SAT', name:'Saturday', focus:'Rest', type:'rest' },
+    { id:'sun', short:'SUN', name:'Sunday', focus:'Rest', type:'rest' },
+  ];
+
+  const rack = document.getElementById('plate-rack');
+  const panel = document.getElementById('day-panel');
+
+  const todayId = ['sun','mon','tue','wed','thu','fri','sat'][new Date().getDay()];
+
+  DAYS.forEach(day => {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn' + (day.type === 'rest' ? ' rest' : '');
+    btn.dataset.id = day.id;
+    btn.setAttribute('aria-label', day.name);
+    btn.innerHTML = `<span class="plate">${day.id === todayId ? '<span class="today-dot"></span>' : ''}</span><span class="day-label">${day.short}</span>`;
+    btn.addEventListener('click', () => selectDay(day.id));
+    rack.appendChild(btn);
+  });
+
+  function exerciseRow(ex, uid){
+    const presc = ex.presc
+      ? `<span class="exercise-presc">${ex.presc}</span>`
+      : `<span class="exercise-presc muted">add your sets &amp; reps</span>`;
+    const action = ex.video
+      ? `<a class="video-card" href="https://www.youtube.com/watch?v=${ex.video}" target="_blank" rel="noopener" aria-label="Watch ${ex.name} form video on YouTube">
+           <img src="https://img.youtube.com/vi/${ex.video}/mqdefault.jpg" alt="" loading="lazy">
+           <span class="play-badge">▶</span>
+         </a>`
+      : `<a class="watch-link" href="${YT_SEARCH(ex.query || (ex.name + ' proper form'))}" target="_blank" rel="noopener">FORM ↗</a>`;
+    return `
+      <div class="exercise">
+        <div class="exercise-row">
+          <div class="exercise-main">
+            <div class="exercise-name">${ex.name}</div>
+            ${presc}
+          </div>
+          ${action}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDay(day){
+    if (day.type === 'rest'){
+      panel.innerHTML = `
+        <div class="rest-panel">
+          <div class="rest-icon"></div>
+          <h2>Rest Day</h2>
+          <p>No lifting on the plan today. Treadmill and the daily targets above still apply.</p>
+        </div>`;
+      return;
+    }
+    panel.innerHTML = `
+      <div class="day-panel-head">
+        <h2 class="day-name">${day.name}</h2>
+        <div class="day-focus">${day.focus}</div>
+      </div>
+      <div class="exercise-list">
+        ${day.exercises.map((ex, i) => exerciseRow(ex, day.id + '-' + i)).join('')}
+      </div>
+    `;
+  }
+
+  function selectDay(id){
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    renderDay(DAYS.find(d => d.id === id));
+  }
+
+  selectDay(todayId);
+</script>
+
+</body>
+</html>
